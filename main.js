@@ -4,6 +4,8 @@ let ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth- 100;
 canvas.height = window.innerHeight- 100;
 
+var dinoImage = new Image();
+dinoImage.src = 'dino1sword.png';
 let dino = {
     x: 100,
     y: 200,
@@ -12,7 +14,8 @@ let dino = {
     speed: 2,
     draw: function() {
         ctx.fillStyle = 'green';
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        // ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.drawImage(dinoImage, this.x, this.y, this.width, this.height);
     }
 }
 // let obstacle = {
@@ -43,10 +46,10 @@ class Obstacle {
 
 let obstacles = [];
 let timer = 0;
-
+let animation;
 
 function runByEachFrame() {
-    requestAnimationFrame(runByEachFrame);
+    animation = requestAnimationFrame(runByEachFrame);
     timer++;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -62,6 +65,8 @@ function runByEachFrame() {
             obstacles.splice(obstacles.indexOf(o), 1);
         }
         //collision detection
+
+
         collisionDetection(o,dino);
         o.x -= o.speed;
         o.draw();
@@ -88,22 +93,20 @@ function runByEachFrame() {
 }
 
 //collision detection
-function collisionDetection(obstacle,dino){
-    obstacles.forEach((o) => {
-        if(dino.x < o.x + o.width && dino.x + dino.width > o.x && dino.y < o.y + o.height && dino.y + dino.height > o.y){
-            console.log('collision');
-            //game over if collision detected
+function collisionDetection(obstacle, dino) {
+    if(dino.x < obstacle.x + obstacle.width &&
+        dino.x + dino.width > obstacle.x &&
+        dino.y < obstacle.y + obstacle.height &&
+        dino.height + dino.y > obstacle.y) {
             gameOver();
-
-        }
     }
-    )
 }
 //game over function shows game over message and stops the game
 function gameOver(){
     ctx.font = '50px Arial';
     ctx.fillText('Game Over', canvas.width/2-150, canvas.height/2);
-    cancelAnimationFrame(runByEachFrame);
+    cancelAnimationFrame(animation);
+    console.log(dino.x,dino.y);
 }
 
 let jumping = false;
